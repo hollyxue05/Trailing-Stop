@@ -9,6 +9,8 @@ purchaseDate = datetime(2025, 7, 14)
 stockTicker = "CRCL" 
 previousPeakValue = 262.97
 stopPercent = 0.2
+trailingStopPrice = 1
+
 
 def getCurrPrice():
     myTicker = yf.Ticker(stockTicker)
@@ -35,7 +37,7 @@ def calculateTrailingStopPrice():
 #    fi
 #   done
 
-    trailingStopPrice = 210.376
+    # trailingStopPrice = 210.376
 
     currPeakPrice = getPeakPrice()
     currPrice = getCurrPrice()
@@ -43,8 +45,9 @@ def calculateTrailingStopPrice():
     if int(currPeakPrice) > int(previousPeakValue) : 
         print("got here")
         #update excel peak price 
+        global trailingStopPrice 
         trailingStopPrice = (1-stopPercent) * currPeakPrice  
-        #update excel 
+        # update excel 
 
     print(trailingStopPrice)
     
