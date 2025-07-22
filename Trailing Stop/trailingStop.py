@@ -8,7 +8,7 @@ stopPercent = 0.2    #user defined/inputted
 stockDict = {
     # 0 = date purchased, 1 = previous peak price, 2 = current trailing stop
     "CRCL" : [datetime(2025, 7, 14), 262.97, 262.97 * (1-stopPercent)], 
-    "HOOD" : [datetime(2025, 7, 14), 120, 120 * (1-stopPercent)]
+    "HOOD" : [datetime(2025, 7, 14), 109.75, 109.75 * (1-stopPercent)]
 }
 
 def getCurrPrice(stockTicker):
