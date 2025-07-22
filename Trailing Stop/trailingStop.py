@@ -3,13 +3,13 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-stopPercent = 0.2    #user inputted
+stopPercent = 0.2    #user defined/inputted
 
 stockDict = {
     # 0 = date purchased, 1 = previous peak price, 2 = current trailing stop
-    "CRCL" : [datetime(2025, 7, 14), 262.97, 262.97 * (1-stopPercent)]
+    "CRCL" : [datetime(2025, 7, 14), 262.97, 262.97 * (1-stopPercent)], 
+    "HOOD" : [datetime(2025, 7, 14), 120, 120 * (1-stopPercent)]
 }
-
 
 def getCurrPrice(stockTicker):
     myTicker = yf.Ticker(stockTicker)
@@ -29,23 +29,22 @@ def calculateTrailingStopPrice(stockTicker):
     global stockDict
 
     if currPeakPrice > stockDict[stockTicker][1] : 
-        #update excel peak price 
-        global trailingStopPrice 
-        trailingStopPrice = (1-stopPercent) * currPeakPrice  
-        # update excel 
+        stockDict[stockTicker][2] = (1-stopPercent) * currPeakPrice  
     
-    if int(currPrice) < int(trailingStopPrice) : 
-        alertCell(currPrice) 
-        print("current trailing stop =", trailingStopPrice)
+    if currPrice < stockDict[stockTicker][2] : 
+        alertCell(stockTicker) 
+        print("current trailing stop =", stockDict[stockTicker][2])
         print("current price = ", currPrice)
     else :
-        print("current trailing stop =", trailingStopPrice)
+        print("current trailing stop =", stockDict[stockTicker][2])
         print("current price = ", currPrice)
 
-def alertCell(price):
-    print("uh oh no money: " )
+def alertCell(stockTicker):
+    print("uh oh no money for",stockTicker )
 
-# print(getCurrPrice("CRCL"))
-# print(getPeakPrice("CRCL"))
+# calculateTrailingStopPrice("HOOD")
 
-calculateTrailingStopPrice("CRCL")
+for ticker in stockDict:
+    print(ticker,":", sep="")
+    calculateTrailingStopPrice(ticker)
+    print()
