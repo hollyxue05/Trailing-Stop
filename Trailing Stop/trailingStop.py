@@ -3,28 +3,32 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-purchaseDate = datetime(2025, 7, 14)
-stockTicker = "CRCL" #given from the user's spreadsheet or input 
 stopPercent = 0.2    #user inputted
-previousPeakValue = 262.97  #given from the user's spreadsheet or input  
-trailingStopPrice = previousPeakValue * (1-stopPercent)
-    
-def getCurrPrice():
+
+stockDict = {
+    # 0 = date purchased, 1 = previous peak price, 2 = current trailing stop
+    "CRCL" : [datetime(2025, 7, 14), 262.97, 262.97 * (1-stopPercent)]
+}
+
+
+def getCurrPrice(stockTicker):
     myTicker = yf.Ticker(stockTicker)
     currPrice = myTicker.fast_info.last_price
     return currPrice
 
-def getPeakPrice():
-    data = yf.Ticker(stockTicker).history(start = purchaseDate)
+def getPeakPrice(stockTicker):
+    global stockDict 
+    data = yf.Ticker(stockTicker).history(start = stockDict[stockTicker][0])
     max_high = data['High'].max()
     return float(max_high)
 
-def calculateTrailingStopPrice():
-    currPeakPrice = getPeakPrice() 
-    currPrice = getCurrPrice() 
+def calculateTrailingStopPrice(stockTicker):
+    currPrice = getCurrPrice(stockTicker) 
+    currPeakPrice = getPeakPrice(stockTicker) 
 
-    # currPeakPrice is ambiguous rn 
-    if currPeakPrice > previousPeakValue : 
+    global stockDict
+
+    if currPeakPrice > stockDict[stockTicker][1] : 
         #update excel peak price 
         global trailingStopPrice 
         trailingStopPrice = (1-stopPercent) * currPeakPrice  
@@ -32,14 +36,16 @@ def calculateTrailingStopPrice():
     
     if int(currPrice) < int(trailingStopPrice) : 
         alertCell(currPrice) 
+        print("current trailing stop =", trailingStopPrice)
+        print("current price = ", currPrice)
     else :
         print("current trailing stop =", trailingStopPrice)
         print("current price = ", currPrice)
 
-
 def alertCell(price):
-    print("uh oh no money: {price}" )
+    print("uh oh no money: " )
 
-# getPeakPrice()
-calculateTrailingStopPrice()
-# getCurrPrice()
+# print(getCurrPrice("CRCL"))
+# print(getPeakPrice("CRCL"))
+
+calculateTrailingStopPrice("CRCL")
