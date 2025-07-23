@@ -33,11 +33,8 @@ def calculateTrailingStopPrice(stockTicker):
     
     if currPrice < stockDict[stockTicker][2] : 
         alertCell(stockTicker) 
-        print("current trailing stop =", stockDict[stockTicker][2])
-        print("current price = ", currPrice)
-    else :
-        print("current trailing stop =", stockDict[stockTicker][2])
-        print("current price = ", currPrice)
+    print("current trailing stop =", stockDict[stockTicker][2])
+    print("current price = ", currPrice)
 
 def alertCell(stockTicker):
     print("uh oh no money for",stockTicker )
