@@ -45,8 +45,7 @@ def calculateTrailingStopPrice(stockTicker):
 
 def alertEmail(stockTicker, currPrice, trailingStop):
     msg = EmailMessage()
-    # msg.set_content(stockTicker,"now has a price of", currPrice,"and has fallen below its trailing stop of", trailingStop)
-    msg.set_content("some stock has fallen below its trailing stop")
+    msg.set_content(stockTicker + ''' now has a price of ''' + str(currPrice) + ''' and has fallen below its trailing stop of ''' + str(trailingStop))
     msg['Subject'] = "Trailing Stop Alert"
     msg['From'] = "sender@email.com"
     msg['To'] = "recipiant@email.com"
