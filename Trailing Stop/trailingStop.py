@@ -1,6 +1,6 @@
-import yfinance as yf  
-import numpy as np
-import pandas as pd
+import yfinance as yf
+import smtplib
+from email.message import EmailMessage
 from datetime import datetime
 
 stopPercent = 0.2    #user defined/inputted
@@ -33,15 +33,32 @@ def calculateTrailingStopPrice(stockTicker):
     if currPeakPrice > stockDict[stockTicker][1] : 
         stockDict[stockTicker][2] = (1-stopPercent) * currPeakPrice  
     
-    if currPrice < stockDict[stockTicker][2] : 
-        alertCell(stockTicker) 
-    print("current trailing stop =", stockDict[stockTicker][2])
-    print("current price = ", currPrice)
+    trailingStop = stockDict[stockTicker][2] 
+    truncated_currPrice = int(currPrice * 1000) / 1000.0
+    truncated_trailingStop = int(trailingStop * 1000) / 1000.0
 
-def alertCell(stockTicker):
-    print("uh oh no money for",stockTicker )
+    if currPrice < trailingStop : 
+        alertEmail(stockTicker, truncated_currPrice, truncated_trailingStop) 
+        print(stockTicker," now has a price of $", truncated_currPrice,", and has fallen below its trailing stop of $", truncated_trailingStop, sep="")
+    else :
+        print(stockTicker, " currently has a price of $", truncated_currPrice, ", and a trailing stop of $", truncated_trailingStop, sep="")
 
-# calculateTrailingStopPrice("HOOD")
+def alertEmail(stockTicker, currPrice, trailingStop):
+    msg = EmailMessage()
+    # msg.set_content(stockTicker,"now has a price of", currPrice,"and has fallen below its trailing stop of", trailingStop)
+    msg.set_content("some stock has fallen below its trailing stop")
+    msg['Subject'] = "Trailing Stop Alert"
+    msg['From'] = "sender@email.com"
+    msg['To'] = "recipiant@email.com"
+
+    try:
+        # For Gmail, use 'smtp.gmail.com' and port 587 for TLS or 465 for SSL
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp: # Or smtplib.SMTP for TLS and then smtp.starttls()
+            smtp.login("sender@email.com", "password") # use an app password for security if sending from gmail  
+            smtp.send_message(msg)
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 for ticker in stockDict:
     print(ticker,":", sep="")
